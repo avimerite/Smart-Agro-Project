@@ -5,7 +5,7 @@ An intelligent, automated, and energy-efficient irrigation ecosystem designed to
 ---
 
 ## 📌 Project Background
-Created by **Avinash Maurya**, this system provides an innovative approach to modern village farming by applying precision agriculture techniques. Instead of constant or blind scheduled watering, the system evaluates the real-time moisture needs of the soil directly, conserving valuable resources while maximizing crop yields.
+Created by **Avinash**, this system provides an innovative approach to modern village farming by applying precision agriculture techniques. Instead of constant or blind scheduled watering, the system evaluates the real-time moisture needs of the soil directly, conserving valuable resources while maximizing crop yields.
 
 ---
 
@@ -47,7 +47,7 @@ Below is the system wiring configuration for your reference.
 * **Dashboard Frontend:** Modern HTML5, customized Poppins font engine styling, full system status responsive bars, and user dark mode customization scripts
 
 ---
-
+![System Image](images/img1.jpg)
 ## 🚀 Deployment Instructions
 
 ### 1. Configuration & Flashing

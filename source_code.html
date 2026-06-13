@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Code - Smart Village Irrigation System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        pre {
+            background-color: #2C3E50;
+            color: #ECF0F1;
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 16px;
+        }
+        h1 {
+            font-size: 32px;
+            color: #27AE60;
+        }
+        .back-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Source Code - Smart Village Irrigation System</h1>
+
+    <pre>
+#include &lt;WiFi.h&gt;
+#include &lt;DHT.h&gt;
+#include &lt;Wire.h&gt;
+#include &lt;LiquidCrystal_I2C.h&gt;
+#include &lt;Servo.h&gt;
+
+const char* ssid = "Bharat_$$";        // Replace with your WiFi SSID
+const char* password = "Ghazipur@0289$"; // Replace with your WiFi Password
+
+#define DHTPIN 2             // Pin for DHT sensor
+#define SOIL_SENSOR_PIN A0   // Pin for soil moisture sensor
+#define RELAY_PIN 3          // Pin for relay
+#define SERVO_PIN 4          // Pin for servo motor
+
+DHT dht(DHTPIN, DHT22);     // DHT sensor object (DHT22)
+
+WiFiServer server(80);       // Web server on port 80
+LiquidCrystal_I2C lcd(0x27, 16, 2); // LCD object with address 0x27 and 16x2 display
+Servo servo;                // Servo object
+
+int relayStatus = LOW;  // Initial relay state
+int soilMoistureThreshold = 400; // Soil moisture threshold to trigger relay
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(100); // Shorter delay for faster connection
+  }
+  Serial.println("Connected to Wi-Fi");
+  
+  // Print the IP address to the Serial Monitor
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+  
+  server.begin();    // Start the web server
+  dht.begin();       // Initialize the DHT sensor
+  
+  lcd.init();        // Initialize the LCD
+  lcd.backlight();   // Turn on the backlight
+
+  pinMode(RELAY_PIN, OUTPUT); // Set relay pin as output
+  digitalWrite(RELAY_PIN, LOW); // Ensure relay is initially off
+  
+  servo.attach(SERVO_PIN); // Attach the servo to the specified pin
+  servo.write(0); // Initialize servo position to 0 degrees
+}
+
+void loop() {
+  // Handle any incoming web clients
+  WiFiClient client = server.available();
+  if (client) {
+    String request = "";
+    while (client.connected()) {
+      if (client.available()) {
+        char c = client.read();
+        request += c;
+        if (c == '\n') {
+          if (request.indexOf("GET /pump/on") >= 0) {
+            digitalWrite(RELAY_PIN, HIGH);  // Turn pump ON
+            relayStatus = HIGH;
+          }
+          if (request.indexOf("GET /pump/off") >= 0) {
+            digitalWrite(RELAY_PIN, LOW);   // Turn pump OFF
+            relayStatus = LOW;
+          }
+          if (request.indexOf("GET /servo/rotate") >= 0) {
+            rotateServo(); // Trigger servo rotation
+          }
+          break;
+        }
+      }
+    }
+
+    // Serve the web page to the client
+    handleClient(client);
+  }
+
+  // Continuously read sensor values and control relay without delay
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature();
+  int soilMoisture = analogRead(SOIL_SENSOR_PIN);
+
+  // Check soil moisture and control the relay with no delay
+  if (soilMoisture < soilMoistureThreshold && relayStatus == LOW) {
+    digitalWrite(RELAY_PIN, HIGH);  // Turn pump ON if soil is dry
+    relayStatus = HIGH;
+  } else if (soilMoisture >= soilMoistureThreshold && relayStatus == HIGH) {
+    digitalWrite(RELAY_PIN, LOW);   // Turn pump OFF if soil is wet
+    relayStatus = LOW;
+  }
+
+  // Update LCD display with the requested format
+  lcd.clear();
+  lcd.setCursor(0, 0);   // First line
+  lcd.print("T: ");
+  lcd.print(temperature, 1);  // Temperature
+  lcd.print(" H: ");
+  lcd.print(humidity, 1);     // Humidity
+
+  lcd.setCursor(0, 1);   // Second line
+  lcd.print("S: ");
+  lcd.print(soilMoisture / 1023.0 * 100.0, 1);  // Soil moisture as percentage
+  lcd.print(" P: ");
+  lcd.print(relayStatus == HIGH ? "ON" : "OFF"); // Pump status
+
+  delay(100);  // Reduced delay for faster web response
+}
+
+void handleClient(WiFiClient &client) {
+  // Read sensor data
+  float temperature = dht.readTemperature();  // Get the latest temperature reading
+  float humidity = dht.readHumidity();       // Get the latest humidity reading
+  int soilMoisture = analogRead(SOIL_SENSOR_PIN); // Get the latest soil moisture reading
+
+  // Create the response
+  String response = "HTTP/1.1 200 OK\r\n";
+  response += "Content-Type: text/html; charset=UTF-8\r\n";
+  response += "Connection: close\r\n\r\n";  // End of HTTP headers
+
+  response += "<html><head><style>";
+  response += "body { font-family: 'Arial', sans-serif; background-color: #fafafa; color: #2c3e50; margin: 0; padding: 0;}"; 
+  response += "h1 { font-size: 40px; color: #3498db; text-align: center; margin: 20px 0;}"; 
+  response += ".container { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;}"; 
+  response += ".card { background-color: #FFFFFF; padding: 20px; border-radius: 15px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin: 20px; width: 100%; max-width: 500px; text-align: center;}"; 
+  response += ".progress-bar { height: 20px; background-color: #ddd; border-radius: 10px; overflow: hidden; margin: 10px 0;}"; 
+  response += ".progress { height: 100%; text-align: center; color: white; line-height: 20px;}"; 
+  response += ".status { font-size: 24px; margin: 10px 0; color: #8e44ad;}"; 
+  response += "button { font-size: 20px; padding: 15px 30px; margin: 10px; border: none; background-color: #3498db; color: white; border-radius: 10px; cursor: pointer; transition: background-color 0.3s;}"; 
+  response += "button:hover { background-color: #2980b9;}"; 
+  response += "@media (max-width: 768px) { body { font-size: 18px;} h1 { font-size: 32px;} .card { padding: 15px;} button { font-size: 18px; padding: 12px 24px;} }"; 
+  response += "</style></head><body>";
+
+  response += "<h1>Smart Village - Irrigation System</h1>";  // Title
+
+  response += "<div class='container'>";
+
+  // Card for Sensor Data (System Status)
+  response += "<div class='card'>"; 
+  response += "<h2>System Status</h2>";
+  response += "<div class='status'>💧 <strong>Humidity:</strong></div>";
+  response += "<div class='progress-bar'><div class='progress' style='width: " + String(humidity) + "%; background-color: #3498db;'>" + String(humidity, 1) + "%</div></div>";
+  response += "<div class='status'>🌡️ <strong>Temperature:</strong></div>";
+  response += "<div class='progress-bar'><div class='progress' style='width: " + String(temperature) + "%; background-color: #e74c3c;'>" + String(temperature, 1) + "°C</div></div>";
+  response += "<div class='status'>🌱 <strong>Soil Moisture:</strong></div>";
+  response += "<div class='progress-bar'><div class='progress' style='width: " + String((soilMoisture / 1023.0) * 100) + "%; background-color: #27ae60;'>" + String((soilMoisture / 1023.0) * 100, 1) + "%</div></div>";
+  response += "<div class='status'>🚰 <strong>Pump Status:</strong> <span style='color: " + String(relayStatus == HIGH ? "#e74c3c" : "#27ae60") + ";'>" + String(relayStatus == HIGH ? "ON" : "OFF") + "</span></div>";
+  response += "</div>";
+
+  response += "</div>";
+  response += "</body></html>";
+
+  client.print(response);
+  client.stop();
+}
+
+void rotateServo() {
+  for (int i = 0; i < 5; i++) {
+    // Rotate from 0 to 90 degrees
+    for (int pos = 0; pos <= 90; pos++) {
+      servo.write(pos);
+    }
+    delay(200);  // Wait for 500ms at 90 degrees
+    // Rotate from 90 to 0 degrees
+    for (int pos = 90; pos >= 0; pos--) {
+      servo.write(pos);
+    }
+    delay(200);  // Wait for 500ms at 0 degrees
+  }
+}
+    </pre>
+
+    <a href="index.html" class="back-btn">Back to Home</a>
+
+</body>
+</html>

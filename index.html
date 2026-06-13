@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Village Irrigation System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 18px;
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #2C3E50, #8E44AD);
+            color: #ECF0F1;
+        }
+
+        .light-mode {
+            background: linear-gradient(135deg, #D5F5E3, #F9E79F);
+            color: #2C3E50;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        header {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ddd;
+        }
+
+        header h1 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 28px;
+            color: #27AE60;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode header h1 {
+            color: #8E44AD;
+        }
+
+        .toggle-mode, .control-system, .source-code-btn {
+            background: none;
+            border: 2px solid currentColor;
+            border-radius: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 15px 25px;
+            color: inherit;
+            transition: all 0.3s;
+        }
+
+        .toggle-mode:hover, .control-system:hover, .source-code-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .farm-image {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .farm-image img {
+            width: 100%;
+            max-width: 1280px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .project-images img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .project-images img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .features {
+            margin-top: 40px;
+        }
+
+        .features h2 {
+            font-weight: 600;
+            font-size: 32px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .features li {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex: 1 1 calc(50% - 30px);
+            font-size: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .features li:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .components {
+            margin-top: 40px;
+        }
+
+        .components h2 {
+            font-weight: 600;
+            font-size: 32px;
+        }
+
+        .components ol {
+            padding-left: 20px;
+        }
+
+        .components li {
+            margin: 10px 0;
+            font-size: 20px;
+        }
+
+        .diagram-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .diagram-section img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-section h2 {
+            font-weight: 600;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .faq {
+            margin-bottom: 20px;
+        }
+
+        .faq h3 {
+            font-size: 24px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .faq p {
+            font-size: 18px;
+            margin: 5px 0 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <header>
+        <h1><b>Smart Village Irrigation System</b></h1>
+        <div class="button-group">
+            <button class="source-code-btn" onclick="window.location.href='source_code.html'">Source Code</button>
+            <button class="toggle-mode" onclick="toggleMode()">Toggle Dark/Light Mode</button>
+            <button class="control-system" onclick="window.location.href='http://192.168.1.105'">Control System</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <p>
+                Welcome! My name is Avinash Maurya, and I am from Class 8. I have created the Ultimate Smart Irrigation System to assist farmers in areas where water is limited or electricity is available only at night. 
+                This innovative project leverages technology to optimize water usage and ensure efficient irrigation, even in challenging conditions. 
+                It is designed to make farming more sustainable and accessible, empowering farmers with tools to save time, water, and energy. 
+                Explore this page to learn more about the features and components that make this system a game-changer for modern agriculture.
+            </p>
+
+            <!-- Farm Image -->
+            <div class="farm-image">
+                <img src="farm.jpg" alt="Farm Image">
+            </div>
+
+            <div class="project-images">
+                <img src="https://via.placeholder.com/300" alt="Project Image 1">
+                <img src="https://via.placeholder.com/300" alt="Project Image 2">
+                <img src="https://via.placeholder.com/300" alt="Project Image 3">
+            </div>
+
+            <div class="features">
+                <h2>Key Features</h2>
+                <ul>
+                    <li>Efficient water management using soil moisture sensors.</li>
+                    <li>Remote control through a dedicated web interface.</li>
+                    <li>Real-time monitoring and alerts.</li>
+                    <li>Integration with weather forecasting APIs.</li>
+                    <li>Scalable design for multiple farms.</li>
+                    <li>Automatic scheduling using timers.</li>
+                    <li>Energy-efficient operation with solar panels.</li>
+                    <li>Low maintenance with durable design.</li>
+                    <li>Data logging for moisture levels and pump usage.</li>
+                </ul>
+            </div>
+
+            <div class="components">
+                <h2>Components Used</h2>
+                <ol>
+                    <li>Arduino R4 WiFi</li>
+                    <li>LCD I2C</li>
+                    <li>Relay Module</li>
+                    <li>DHT22 Sensor</li>
+                    <li>Soil Moisture Sensor</li>
+                    <li>Water Pump</li>
+                    <li>Servo Motor</li>
+                    <li>Wires</li>
+                    <li>Breadboard</li>
+                    <li>Cardboard</li>
+                    <li>Colorful Sheets</li>
+                    <li>Soil</li>
+                </ol>
+            </div>
+
+            <div class="diagram-section">
+                <h2>Project Circuit Diagram</h2>
+                <p>Below is the detailed circuit diagram for the Smart Village Irrigation System:</p>
+                <img src="circuit_image.png" alt="Circuit Diagram">
+            </div>
+
+            <div class="faq-section">
+                <h2>Top 5 Frequently Asked Questions</h2>
+                <div class="faq">
+                    <h3>1. What is the purpose of the Smart Village Irrigation System?</h3>
+                    <p>The system aims to help farmers optimize water usage and ensure efficient irrigation, especially in areas with water scarcity or limited electricity availability.</p>
+                </div>
+                <div class="faq">
+                    <h3>2. How does the system manage water usage?</h3>
+                    <p>It uses soil moisture sensors to monitor the moisture levels and automatically activates the water pump when needed.</p>
+                </div>
+                <div class="faq">
+                    <h3>3. Can the system be controlled remotely?</h3>
+                    <p>Yes, the system includes a dedicated web interface that allows remote control and monitoring.</p>
+                </div>
+                <div class="faq">
+                    <h3>4. What are the power requirements for this system?</h3>
+                    <p>The system is energy-efficient and can operate using solar panels, making it sustainable for remote areas.</p>
+                </div>
+                <div class="faq">
+                    <h3>5. Is this system scalable for larger farms?</h3>
+                    <p>Yes, the design is scalable and can be customized to accommodate multiple farms or larger areas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; copyright 2025 Avinash. All rights reserved. "Smart Village Irrigation System" is a registered concept of Avinash.
+    </footer>
+
+    <script>
+        function toggleMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+        }
+    </script>
+</body>
+</html>

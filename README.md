@@ -47,7 +47,7 @@ Below is the system wiring configuration for your reference.
 * **Dashboard Frontend:** Modern HTML5, customized Poppins font engine styling, full system status responsive bars, and user dark mode customization scripts
 
 ---
-![System Image](images/img1.jpg)
+![System Image](img1.jpg)
 ## 🚀 Deployment Instructions
 
 ### 1. Configuration & Flashing
